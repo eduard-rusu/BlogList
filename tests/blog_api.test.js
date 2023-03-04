@@ -1,4 +1,4 @@
-// const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('../app');
 const Blog = require('../models/blog');
@@ -76,4 +76,27 @@ describe('api tests', () => {
       .send(blog)
       .expect(400);
   });
+
+  test('delete returns code 204 on success', async () => {
+    const blog = helper.initialBlogs[0];
+    const blogToSave = new Blog(blog);
+    await blogToSave.save();
+
+    let blogToDelete = await Blog.findOne(blog);
+    blogToDelete = blogToDelete.toJSON();
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204);
+  });
+
+  test('delete returns code 404 for non existent id', async () => {
+    const nonexistingId = await helper.nonexistingId();
+    await api
+      .delete(`/api/blogs/${nonexistingId}`)
+      .expect(404);
+  });
+});
+
+afterAll(async () => {
+  mongoose.connection.close();
 });
