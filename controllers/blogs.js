@@ -9,8 +9,13 @@ blogRouter.get('/', async (req, res) => {
 blogRouter.post('/', async (req, res) => {
   const blog = new Blog(req.body);
   const savedBlog = await blog.save();
-  
   res.status(201).json(savedBlog);
+});
+
+blogRouter.delete('/:id', async (req, res) => {
+  const deletedBlog = await Blog.findByIdAndDelete(req.params.id);
+  if (!deletedBlog) return res.status(404).end();
+  return res.status(204);
 });
 
 module.exports = blogRouter;
