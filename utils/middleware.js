@@ -7,7 +7,7 @@ const unkownEndpoint = (req, res) => {
 const errorHandler = (err, req, res, next) => {
   logger.error(err.message);
   if (err.name === 'ValidationError') return res.status(400).end();
-  next();
+  return next();
 };
 
 module.exports = {
