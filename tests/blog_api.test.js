@@ -89,10 +89,38 @@ describe('api tests', () => {
       .expect(204);
   });
 
-  test('delete returns code 404 for non existent id', async () => {
+  test('delete returns code 404 for non existing id', async () => {
     const nonexistingId = await helper.nonexistingId();
     await api
       .delete(`/api/blogs/${nonexistingId}`)
+      .expect(404);
+  });
+
+  test('put returns code 200 with new Blog on sucess', async () => {
+    const blog = {
+      title: 'My Title',
+      author: 'My Name',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 666,
+    };
+    const blogToModify = new Blog(blog);
+    await blogToModify.save();
+    blog.title = 'New Title';
+
+    let blogToCheck = await api
+      // eslint-disable-next-line no-underscore-dangle
+      .put(`/api/blogs/${blogToModify._id.toString()}`)
+      .send(blog)
+      .expect(200);
+    blogToCheck = blogToCheck.body;
+    delete blogToCheck.id;
+    expect(blog).toEqual(blogToCheck);
+  });
+
+  test('put returns code 404 for non existing id', async () => {
+    const nonexistingId = helper.nonexistingId();
+    await api
+      .put(`/api/blogs/${nonexistingId}`)
       .expect(404);
   });
 });

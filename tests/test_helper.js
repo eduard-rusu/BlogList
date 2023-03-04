@@ -49,8 +49,8 @@ const nonexistingId = async () => {
   const blog = new Blog(b);
 
   await blog.save();
-  await Blog.findOneAndDelete(b);
-  console.log(await Blog.findOne(b));
+  // eslint-disable-next-line no-underscore-dangle
+  await Blog.findByIdAndDelete(blog._id);
 
   // eslint-disable-next-line no-underscore-dangle
   return blog._id.toString();
