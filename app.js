@@ -38,6 +38,8 @@ app.disconnectFromDb = async function () {
 app.use(cors());
 app.use(express.json());
 
+app.use(middleware.decodeToken);
+
 app.use('/api/blogs', blogRouter);
 app.use('/api/users', userRouter);
 app.use('/api/login', loginRouter);

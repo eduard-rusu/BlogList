@@ -3,22 +3,15 @@ const jwt = require('jsonwebtoken');
 const Blog = require('../models/blog');
 const User = require('../models/user');
 
-const parseToken = (req) => {
-  const auth = req.get('authorization');
-  if (auth && auth.includes('Bearer ')) return auth.replace('Bearer ', '');
-  return null;
-};
-
 blogRouter.get('/', async (req, res) => {
   const blogs = await Blog.find({}).populate('user', { username: 1 });
   res.json(blogs);
 });
 
 blogRouter.post('/', async (req, res) => {
-  const token = parseToken(req);
-  if (!token) return res.status(400).send({ error: 'Missing token' });
+  if (!req.token) return res.status(400).send({ error: 'Missing token' });
 
-  const tokenUser = jwt.verify(token, process.env.SECRET);
+  const tokenUser = jwt.verify(req.token, process.env.SECRET);
 
   const user = await User.findById(tokenUser.id);
   if (!user) return res.status(404).send({ error: 'User not found' });
