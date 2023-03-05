@@ -1,10 +1,13 @@
-const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('../app');
 const Blog = require('../models/blog');
-const helper = require('./test_helper');
+const helper = require('./blog_helper');
 
 const api = supertest(app);
+
+beforeAll(async () => {
+  await app.connectToDb();
+});
 
 beforeEach(async () => {
   await Blog.deleteMany({});
@@ -126,5 +129,5 @@ describe('api tests', () => {
 });
 
 afterAll(async () => {
-  mongoose.connection.close();
+  await app.disconnectFromDb();
 });

@@ -6,7 +6,15 @@ const unkownEndpoint = (req, res) => {
 
 const errorHandler = (err, req, res, next) => {
   logger.error(err.message);
-  if (err.name === 'ValidationError') return res.status(400).end();
+  logger.error(err.name);
+  if (err.name === 'ValidationError') {
+    return res.status(400).send({ error: err.message });
+  } else if (err.name === 'MongoServerError') {
+     return res.status(400).send({ error: err.message });
+  } else if (err.name === 'JsonWebTokenError') {
+    return res.status(400).send({ error: err.message });
+  }
+
   return next();
 };
 
