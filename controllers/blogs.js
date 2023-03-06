@@ -2,14 +2,15 @@ const blogRouter = require('express').Router();
 const jwt = require('jsonwebtoken');
 const Blog = require('../models/blog');
 const User = require('../models/user');
+const { tokenExtractor } = require('../utils/middleware');
 
 blogRouter.get('/', async (req, res) => {
   const blogs = await Blog.find({}).populate('user', { username: 1 });
   res.json(blogs);
 });
 
-blogRouter.post('/', async (req, res) => {
-  if (!req.token) return res.status(400).send({ error: 'Missing token' });
+blogRouter.post('/', tokenExtractor, async (req, res) => {
+  if (!req.token) return res.status(401).send({ error: 'Missing token' });
 
   const tokenUser = jwt.verify(req.token, process.env.SECRET);
 
@@ -26,9 +27,16 @@ blogRouter.post('/', async (req, res) => {
   return res.status(201).json(savedBlog);
 });
 
-blogRouter.delete('/:id', async (req, res) => {
-  const deletedBlog = await Blog.findByIdAndDelete(req.params.id);
-  if (!deletedBlog) return res.status(404).end();
+blogRouter.delete('/:id', tokenExtractor, async (req, res) => {
+  if (!req.token) return res.status(401).end();
+
+  const tokenUser = jwt.verify(req.token, process.env.SECRET);
+  const blog = await Blog.findById(req.params.id);
+  if (!blog) return res.status(404).end();
+
+  if (blog.user.toString() !== tokenUser.id) return res.status(400).send({ error: 'Blog owner does not match token owner' });
+  Blog.deleteOne(blog);
+
   return res.status(204).end();
 });
 

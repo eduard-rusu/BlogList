@@ -93,14 +93,19 @@ describe('api tests', () => {
       likes: 666,
     };
 
-    await api
+    const res = await api
       .post('/api/blogs')
       .send(blog)
+      .set('Authorization', `Bearer ${token}`)
       .expect(400);
+
+    expect(res.body.error).toContain('Path `url` is required');
+    expect(res.body.error).toContain('Path `title` is required');
   });
 
   test('delete returns code 204 on success', async () => {
     const blog = helper.initialBlogs[0];
+    blog.user = userid;
     const blogToSave = new Blog(blog);
     await blogToSave.save();
 
@@ -108,6 +113,7 @@ describe('api tests', () => {
     blogToDelete = blogToDelete.toJSON();
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `Bearer ${token}`)
       .expect(204);
   });
 
@@ -115,6 +121,7 @@ describe('api tests', () => {
     const nonexistingId = await helper.nonexistingId({ token });
     await api
       .delete(`/api/blogs/${nonexistingId}`)
+      .set('Authorization', `Bearer ${token}`)
       .expect(404);
   });
 
