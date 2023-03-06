@@ -1,4 +1,5 @@
 /* eslint-disable no-else-return */
+const jwt = require('jsonwebtoken');
 const logger = require('./logger');
 
 const tokenExtractor = (req, res, next) => {
@@ -6,6 +7,11 @@ const tokenExtractor = (req, res, next) => {
   if (auth && auth.includes('Bearer ')) {
     req.token = auth.replace('Bearer ', '');
   }
+  next();
+};
+
+const userExtractor = (req, res, next) => {
+  if (req.token) req.user = jwt.verify(req.token, process.env.SECRET);
   next();
 };
 
@@ -21,7 +27,7 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name === 'MongoServerError') {
     return res.status(400).send({ error: err.message });
   } else if (err.name === 'JsonWebTokenError') {
-    return res.status(400).send({ error: err.message });
+    return res.status(401).send({ error: err.message });
   }
 
   return next();
@@ -29,6 +35,7 @@ const errorHandler = (err, req, res, next) => {
 
 module.exports = {
   tokenExtractor,
+  userExtractor,
   unkownEndpoint,
   errorHandler,
 };

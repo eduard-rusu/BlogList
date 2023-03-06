@@ -103,6 +103,19 @@ describe('api tests', () => {
     expect(res.body.error).toContain('Path `title` is required');
   });
 
+  test('post returns 401 if no token is provided', async () => {
+    await api
+      .post('/api/blogs')
+      .expect(401);
+  });
+
+  test('post returns 401 for invalid token', async () => {
+    await api
+      .post('/api/blogs')
+      .set('Authorization', 'Bearer asdfdsg')
+      .expect(401);
+  });
+
   test('delete returns code 204 on success', async () => {
     const blog = helper.initialBlogs[0];
     blog.user = userid;
