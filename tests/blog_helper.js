@@ -1,4 +1,6 @@
+// const bcrypt = require('bcrypt');
 const Blog = require('../models/blog');
+// const User = require('../models/user');
 
 const initialBlogs = [
   {
@@ -50,8 +52,7 @@ const nonexistingId = async () => {
 
   await blog.save();
   // eslint-disable-next-line no-underscore-dangle
-  await Blog.findByIdAndDelete(blog._id);
-
+  await Blog.findByIdAndDelete(blog.id);
   // eslint-disable-next-line no-underscore-dangle
   return blog._id.toString();
 };

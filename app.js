@@ -15,7 +15,7 @@ mongoose.set('strictQuery', false);
 
 const mongoUrl = config.MONGODB_URI;
 
-app.connectToDb = async function () {
+app.connectToDb = async () => {
   try {
     await mongoose.connect(mongoUrl);
     logger.info('Connected to db');
@@ -26,7 +26,7 @@ app.connectToDb = async function () {
 
 app.connectToDb();
 
-app.disconnectFromDb = async function () {
+app.disconnectFromDb = async () => {
   try {
     await mongoose.connection.close();
     logger.info('Disconnected from db');
@@ -38,7 +38,7 @@ app.disconnectFromDb = async function () {
 app.use(cors());
 app.use(express.json());
 
-app.use(middleware.decodeToken);
+app.use(middleware.tokenExtractor);
 
 app.use('/api/blogs', blogRouter);
 app.use('/api/users', userRouter);

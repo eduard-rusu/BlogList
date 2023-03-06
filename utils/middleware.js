@@ -1,7 +1,7 @@
 /* eslint-disable no-else-return */
 const logger = require('./logger');
 
-const decodeToken = (req, res, next) => {
+const tokenExtractor = (req, res, next) => {
   const auth = req.get('authorization');
   if (auth && auth.includes('Bearer ')) {
     req.token = auth.replace('Bearer ', '');
@@ -28,7 +28,7 @@ const errorHandler = (err, req, res, next) => {
 };
 
 module.exports = {
-  decodeToken,
+  tokenExtractor,
   unkownEndpoint,
   errorHandler,
 };

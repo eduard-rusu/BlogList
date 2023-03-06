@@ -1,12 +1,29 @@
 const supertest = require('supertest');
+const bcrypt = require('bcrypt');
 const app = require('../app');
 const Blog = require('../models/blog');
+const User = require('../models/user');
 const helper = require('./blog_helper');
 
 const api = supertest(app);
+let token = null;
+let userid = null;
 
 beforeAll(async () => {
-  await app.connectToDb();
+  app.connectToDb();
+  await User.deleteMany({});
+  const user = new User({
+    username: 'root',
+    passwordHash: await bcrypt.hash('root', 10),
+  });
+  await user.save();
+  const res = await api
+    .post('/api/login')
+    .send({ username: 'root', password: 'root' });
+
+  token = res.body.token;
+  // eslint-disable-next-line no-underscore-dangle
+  userid = user._id;
 });
 
 beforeEach(async () => {
@@ -41,11 +58,13 @@ describe('api tests', () => {
       title: 'My Title',
       author: 'My Name',
       url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      user: userid,
       likes: 666,
     };
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(blog)
       .expect(201)
       .expect('Content-Type', /json/);
@@ -93,7 +112,7 @@ describe('api tests', () => {
   });
 
   test('delete returns code 404 for non existing id', async () => {
-    const nonexistingId = await helper.nonexistingId();
+    const nonexistingId = await helper.nonexistingId({ token });
     await api
       .delete(`/api/blogs/${nonexistingId}`)
       .expect(404);
@@ -121,7 +140,7 @@ describe('api tests', () => {
   });
 
   test('put returns code 404 for non existing id', async () => {
-    const nonexistingId = helper.nonexistingId();
+    const nonexistingId = await helper.nonexistingId({ token });
     await api
       .put(`/api/blogs/${nonexistingId}`)
       .expect(404);
