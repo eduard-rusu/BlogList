@@ -45,5 +45,17 @@ const update = async (blog) => {
   return data
 }
 
+const remove = async (id) => {
+  const opts = {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: token
+    }
+  }
+  const res = await fetch(`http://localhost:3003/api/blogs/${id}`, opts)
+  if (!res.ok) throw new Error('Could not delete blog')
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
-export default { setToken, getAll, create, update }
+export default { setToken, getAll, create, update, remove }

@@ -20,6 +20,10 @@ const App = () => {
     setMessage(`Added ${newBlog.title} by ${newBlog.author}`)
   }
 
+  const removeBlog = (blog) => {
+    setBlogs(blogs.filter(b => b.id !== blog.id))
+  }
+
   useEffect(() => {
     blogsService.getAll()
       .then(data => setBlogs(data))
@@ -65,7 +69,7 @@ const App = () => {
         </Toggleable>
         { blogs
           .sort((a, b) => b.likes - a.likes)
-          .map(b => <Blog key={b.id} blog={b}/>) }
+          .map(b => <Blog key={b.id} blog={b} user={user} removeBlog={removeBlog}/>) }
       </>
     )
   }

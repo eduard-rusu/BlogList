@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 import blogsService from "../services/blogs"
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, user, removeBlog }) => {
   const [showDetails, setShowDetails] = useState(false)
   const [likes, setLikes] = useState(blog.likes)
-  
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -14,12 +14,13 @@ const Blog = ({ blog }) => {
   }
 
   const details = {display: showDetails ? '' : 'none'}
+  const remove = {display: user.username === blog.user.username ? '' : 'none'}
 
   const toggleDetails = () => {
     setShowDetails(!showDetails)
   }
 
-  const like = async () => {
+  const handleOnLike = async () => {
     try {
       const newBlog = {
         id: blog.id,
@@ -29,6 +30,16 @@ const Blog = ({ blog }) => {
       const res = await blogsService.update(newBlog)
       blog.likes = res.likes
       setLikes(blog.likes)
+    } catch (ex) {
+      console.error(ex)
+    }
+  }
+
+  const handleOnRemove = async () => {
+    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) return
+    try {
+      await blogsService.remove(blog.id)
+      removeBlog(blog)
     } catch (ex) {
       console.error(ex)
     }
@@ -45,10 +56,13 @@ const Blog = ({ blog }) => {
         </div>
         <div>
           { likes }
-          <button onClick={like}>like</button>
+          <button onClick={handleOnLike}>like</button>
         </div>
         <div>
           { blog.user.username }
+        </div>
+        <div style={remove}>
+          <button onClick={handleOnRemove}>remove</button>
         </div>
       </div>
     </div>
