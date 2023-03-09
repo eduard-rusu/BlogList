@@ -8,6 +8,11 @@ const AddBlog = ({ addNewBlog, notification }) => {
 
   const handleOnSubmit = async (e) => {
     e.preventDefault()
+    
+    if (title === '' || author === '' || url === '') {
+      notification('Incomplete form')
+      return;
+    }
 
     try {
       const res = await blogsService.create({

@@ -21,7 +21,7 @@ const Blog = ({ blog }) => {
     <div style={blogStyle}>
       { blog.title } 
       { blog.author }
-      <button onClick={toggleDetails}>text</button>
+      <button onClick={toggleDetails}>{ showDetails ? 'hide' : 'show' }</button>
       <div style={details}>
         <div>
           { blog.url }
@@ -31,7 +31,7 @@ const Blog = ({ blog }) => {
           <button>like</button>
         </div>
         <div>
-          { blog.user.username}
+          { blog.user.username }
         </div>
       </div>
     </div>
