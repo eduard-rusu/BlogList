@@ -1,8 +1,10 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import blogsService from "../services/blogs"
 
 const Blog = ({ blog }) => {
   const [showDetails, setShowDetails] = useState(false)
-
+  const [likes, setLikes] = useState(blog.likes)
+  
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -17,6 +19,21 @@ const Blog = ({ blog }) => {
     setShowDetails(!showDetails)
   }
 
+  const like = async () => {
+    try {
+      const newBlog = {
+        id: blog.id,
+        user: blog.user.id,
+        likes: blog.likes + 1
+      }
+      const res = await blogsService.update(newBlog)
+      blog.likes = res.likes
+      setLikes(blog.likes)
+    } catch (ex) {
+      console.error(ex)
+    }
+  }
+
   return (
     <div style={blogStyle}>
       { blog.title } 
@@ -27,8 +44,8 @@ const Blog = ({ blog }) => {
           { blog.url }
         </div>
         <div>
-          { blog.likes }
-          <button>like</button>
+          { likes }
+          <button onClick={like}>like</button>
         </div>
         <div>
           { blog.user.username }

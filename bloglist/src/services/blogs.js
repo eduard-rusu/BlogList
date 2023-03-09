@@ -28,4 +28,22 @@ const create = async (blog) => {
   return data
 }
 
-export default { setToken, getAll, create }
+const update = async (blog) => {
+  const opts = {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: token
+    },
+    body: JSON.stringify(blog)
+  }
+  const res = await fetch(`http://localhost:3003/api/blogs/${blog.id}`, opts)
+
+  if (!res.ok) throw new Error('Could not update blog')
+
+  const data = await res.json()
+  return data
+}
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default { setToken, getAll, create, update }
