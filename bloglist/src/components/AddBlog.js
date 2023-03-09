@@ -1,5 +1,5 @@
-import { useState } from "react"
-import blogsService from "../services/blogs"
+import { useState } from 'react'
+import blogsService from '../services/blogs'
 
 const AddBlog = ({ addNewBlog, notification }) => {
   const [title, setTitle] = useState('')
@@ -8,10 +8,10 @@ const AddBlog = ({ addNewBlog, notification }) => {
 
   const handleOnSubmit = async (e) => {
     e.preventDefault()
-    
+
     if (title === '' || author === '' || url === '') {
       notification('Incomplete form')
-      return;
+      return
     }
 
     try {

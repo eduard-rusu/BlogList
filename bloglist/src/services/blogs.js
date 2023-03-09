@@ -1,4 +1,4 @@
-let token = null;
+let token = null
 
 const setToken = (t) => {
   token = `Bearer ${t}`
@@ -21,9 +21,9 @@ const create = async (blog) => {
     body: JSON.stringify(blog)
   }
   const res = await fetch('http://localhost:3003/api/blogs', opts)
-  
+
   if (!res.ok) throw new Error('Could not create blog')
-  
+
   const data = await res.json()
   return data
 }
@@ -57,5 +57,4 @@ const remove = async (id) => {
   if (!res.ok) throw new Error('Could not delete blog')
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
 export default { setToken, getAll, create, update, remove }

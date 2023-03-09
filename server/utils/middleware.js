@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const logger = require('./logger');
 
 const tokenExtractor = (req, res, next) => {
-  const auth = req.get('authorization');
+  const auth = req.get('Authorization');
   if (auth && auth.includes('Bearer ')) {
     req.token = auth.replace('Bearer ', '');
   }

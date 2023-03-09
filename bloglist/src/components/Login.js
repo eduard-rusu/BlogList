@@ -1,6 +1,6 @@
-import { useState } from "react"
-import loginService from "../services/login"
-import blogServices from "../services/blogs"
+import { useState } from 'react'
+import loginService from '../services/login'
+import blogServices from '../services/blogs'
 
 const Login = ({ setUser }) => {
   const [username, setUsername] = useState('')
@@ -10,7 +10,7 @@ const Login = ({ setUser }) => {
     e.preventDefault()
 
     try {
-      const user = await loginService.login({ username, password})
+      const user = await loginService.login({ username, password })
       window.localStorage.setItem('loggedBloglistUser', JSON.stringify(user))
       blogServices.setToken(user.token)
       setUser(user)
@@ -22,21 +22,21 @@ const Login = ({ setUser }) => {
   return (
     <form onSubmit={ handleOnSubmit }>
       <div>
-        username: 
-        <input 
+        username:
+        <input
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          >
+        >
         </input>
       </div>
       <div>
-        password: 
-        <input 
+        password:
+        <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          >
+        >
         </input>
       </div>
       <button type="submit">Login</button>

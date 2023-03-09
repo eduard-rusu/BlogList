@@ -16,7 +16,7 @@ const App = () => {
     setUser(null)
     window.localStorage.removeItem('loggedBloglistUser')
   }
-  
+
   const addNewBlog = (newBlog) => {
     setBlogs(blogs.concat(newBlog))
     setMessage(`Added ${newBlog.title} by ${newBlog.author}`)
@@ -30,14 +30,14 @@ const App = () => {
   useEffect(() => {
     blogsService.getAll()
       .then(data => setBlogs(data))
-      .catch(err => console.error('err'))
+      .catch(err => console.error(err))
 
     const user = JSON.parse(window.localStorage.getItem('loggedBloglistUser'))
     if (user) {
       setUser(user)
       blogsService.setToken(user.token)
     }
-    
+
   }, [])
 
   useEffect(() => {
@@ -53,7 +53,7 @@ const App = () => {
         <h2>Login</h2>
         <Toggleable buttonLabel={'log in'}>
           <Login setUser={setUser}/>
-        </Toggleable> 
+        </Toggleable>
       </>
     )
   }
@@ -91,7 +91,7 @@ const App = () => {
       {user === null && loginForm()}
       {user !== null && blogForm()}
     </>
-  );
+  )
 }
 
 export default App

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react"
-import blogsService from "../services/blogs"
+import { useState } from 'react'
+import blogsService from '../services/blogs'
 
 const Blog = ({ blog, user, removeBlog }) => {
   const [showDetails, setShowDetails] = useState(false)
@@ -13,8 +13,8 @@ const Blog = ({ blog, user, removeBlog }) => {
     marginBottom: 5
   }
 
-  const details = {display: showDetails ? '' : 'none'}
-  const remove = {display: user.username === blog.user.username ? '' : 'none'}
+  const details = { display: showDetails ? '' : 'none' }
+  const remove = { display: user.username === blog.user.username ? '' : 'none' }
 
   const toggleDetails = () => {
     setShowDetails(!showDetails)
@@ -47,7 +47,7 @@ const Blog = ({ blog, user, removeBlog }) => {
 
   return (
     <div style={blogStyle}>
-      { blog.title } 
+      { blog.title }
       { blog.author }
       <button onClick={toggleDetails}>{ showDetails ? 'hide' : 'show' }</button>
       <div style={details}>
