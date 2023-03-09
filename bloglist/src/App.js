@@ -63,7 +63,9 @@ const App = () => {
           <h2>create new</h2>
           <AddBlog addNewBlog={addNewBlog} notification={setMessage}/>
         </Toggleable>
-        { blogs.map(b => <Blog key={b.id} blog={b}/>) }
+        { blogs
+          .sort((a, b) => b.likes - a.likes)
+          .map(b => <Blog key={b.id} blog={b}/>) }
       </>
     )
   }
