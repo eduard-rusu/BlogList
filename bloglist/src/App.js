@@ -4,6 +4,7 @@ import AddBlog from './components/AddBlog'
 import Blog from './components/Blog'
 import Login from './components/Login'
 import Notification from './components/Notification'
+import Toggleable from './components/Toggleable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -25,8 +26,11 @@ const App = () => {
       .catch(err => console.error('err'))
 
     const user = JSON.parse(window.localStorage.getItem('loggedBloglistUser'))
-    if (user) setUser(user)
-    blogsService.setToken(user.token)
+    if (user) {
+      setUser(user)
+      blogsService.setToken(user.token)
+    }
+    
   }, [])
 
   useEffect(() => {
@@ -40,7 +44,9 @@ const App = () => {
     return (
       <>
         <h2>Login</h2>
-        <Login setUser={setUser}/>
+        <Toggleable buttonLabel={'log in'}>
+          <Login setUser={setUser}/>
+        </Toggleable> 
       </>
     )
   }
