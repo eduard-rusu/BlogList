@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import blogsService from './services/blogs'
 import AddBlog from './components/AddBlog'
 import Blog from './components/Blog'
@@ -10,6 +10,8 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [message, setMessage] = useState('')
+  const blogFormRef = useRef()
+
   const handleLogout = () => {
     setUser(null)
     window.localStorage.removeItem('loggedBloglistUser')
@@ -18,6 +20,7 @@ const App = () => {
   const addNewBlog = (newBlog) => {
     setBlogs(blogs.concat(newBlog))
     setMessage(`Added ${newBlog.title} by ${newBlog.author}`)
+    blogFormRef.current.toggleVisibility()
   }
 
   const removeBlog = (blog) => {
@@ -63,7 +66,7 @@ const App = () => {
           {`User ${user.username} is logged in`}
           <button onClick={handleLogout}>logout</button>
         </div>
-        <Toggleable buttonLabel={'create new blog'}>
+        <Toggleable buttonLabel={'create new blog'} ref={blogFormRef}>
           <h2>create new</h2>
           <AddBlog addNewBlog={addNewBlog} notification={setMessage}/>
         </Toggleable>

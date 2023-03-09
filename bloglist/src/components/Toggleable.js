@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { forwardRef, useImperativeHandle, useState } from "react"
 
-const Toggleable = ({ buttonLabel, children }) => {
+const Toggleable = forwardRef(({ buttonLabel, children }, refs) => {
   const [loginVisible, setLoginVisible] = useState(false)
   const hide = { display: loginVisible ? 'none' : ''}
   const show = { display: loginVisible ? '' : 'none'}
@@ -8,6 +8,12 @@ const Toggleable = ({ buttonLabel, children }) => {
   const toggleVisibility = () => {
     setLoginVisible(!loginVisible)
   }
+
+  useImperativeHandle(refs, () => {
+    return {
+      toggleVisibility
+    }
+  })
 
   return (
     <div>
@@ -22,6 +28,6 @@ const Toggleable = ({ buttonLabel, children }) => {
       </div>
     </div>
   )
-}
+})
 
 export default Toggleable
