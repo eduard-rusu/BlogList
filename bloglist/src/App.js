@@ -59,8 +59,10 @@ const App = () => {
           {`User ${user.username} is logged in`}
           <button onClick={handleLogout}>logout</button>
         </div>
-        <h2>create new</h2>
-        <AddBlog addNewBlog={addNewBlog} notification={setMessage}/>
+        <Toggleable buttonLabel={'create new blog'}>
+          <h2>create new</h2>
+          <AddBlog addNewBlog={addNewBlog} notification={setMessage}/>
+        </Toggleable>
         { blogs.map(b => <Blog key={b.id} blog={b}/>) }
       </>
     )
