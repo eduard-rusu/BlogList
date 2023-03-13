@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import blogsService from '../services/blogs'
 
-const Blog = ({ blog, user, removeBlog }) => {
+const Blog = ({ blog, children }) => {
   const [showDetails, setShowDetails] = useState(false)
   const [likes, setLikes] = useState(blog.likes)
 
@@ -14,8 +14,6 @@ const Blog = ({ blog, user, removeBlog }) => {
   }
 
   const details = { display: showDetails ? '' : 'none' }
-  const remove = { display: user.username === blog.user.username ? '' : 'none' }
-
   const toggleDetails = () => {
     setShowDetails(!showDetails)
   }
@@ -24,7 +22,6 @@ const Blog = ({ blog, user, removeBlog }) => {
     try {
       const newBlog = {
         id: blog.id,
-        user: blog.user.id,
         likes: blog.likes + 1
       }
       const res = await blogsService.update(newBlog)
@@ -35,20 +32,9 @@ const Blog = ({ blog, user, removeBlog }) => {
     }
   }
 
-  const handleOnRemove = async () => {
-    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) return
-    try {
-      await blogsService.remove(blog.id)
-      removeBlog(blog)
-    } catch (ex) {
-      console.error(ex)
-    }
-  }
-
   return (
     <div style={blogStyle}>
-      { blog.title }
-      { blog.author }
+      { blog.title } { blog.author }
       <button onClick={toggleDetails}>{ showDetails ? 'hide' : 'show' }</button>
       <div style={details}>
         <div>
@@ -58,12 +44,7 @@ const Blog = ({ blog, user, removeBlog }) => {
           { likes }
           <button onClick={handleOnLike}>like</button>
         </div>
-        <div>
-          { blog.user.username }
-        </div>
-        <div style={remove}>
-          <button onClick={handleOnRemove}>remove</button>
-        </div>
+        { children }
       </div>
     </div>
   )

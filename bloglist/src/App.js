@@ -23,8 +23,19 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
   }
 
-  const removeBlog = (blog) => {
-    setBlogs(blogs.filter(b => b.id !== blog.id))
+  const handleRemoveBlog = (blog) => {
+    if (blog.user.username !== user.username) return () => {}
+
+    return async () => {
+      if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) return
+      try {
+        await blogsService.remove(blog.id)
+      } catch (ex) {
+        console.error(ex)
+        return
+      }
+      setBlogs(blogs.filter(b => b.id !== blog.id))
+    }
   }
 
   useEffect(() => {
@@ -59,6 +70,18 @@ const App = () => {
   }
 
   const blogForm = () => {
+    const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes).map(b => {
+      return (
+        <Blog key={b.id} blog={b}>
+          <div>
+            { b.user.username }
+          </div>
+          <div>
+            <button style={{ display: user.username === b.user.username ? '' : 'none' }} onClick={handleRemoveBlog(b)}>remove</button>
+          </div>
+        </Blog>
+      )
+    })
     return (
       <>
         <h2>Blogs</h2>
@@ -70,9 +93,7 @@ const App = () => {
           <h2>create new</h2>
           <AddBlog addNewBlog={addNewBlog} notification={setMessage}/>
         </Toggleable>
-        { blogs
-          .sort((a, b) => b.likes - a.likes)
-          .map(b => <Blog key={b.id} blog={b} user={user} removeBlog={removeBlog}/>) }
+        { sortedBlogs }
       </>
     )
   }
