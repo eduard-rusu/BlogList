@@ -1,9 +1,7 @@
 import { useState } from 'react'
-import blogsService from '../services/blogs'
 
-const Blog = ({ blog, children }) => {
+const Blog = ({ blog, username, handleOnLike, handleRemoveBlog }) => {
   const [showDetails, setShowDetails] = useState(false)
-  const [likes, setLikes] = useState(blog.likes)
 
   const blogStyle = {
     paddingTop: 10,
@@ -12,39 +10,31 @@ const Blog = ({ blog, children }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-
   const details = { display: showDetails ? '' : 'none' }
   const toggleDetails = () => {
     setShowDetails(!showDetails)
   }
 
-  const handleOnLike = async () => {
-    try {
-      const newBlog = {
-        id: blog.id,
-        likes: blog.likes + 1
-      }
-      const res = await blogsService.update(newBlog)
-      blog.likes = res.likes
-      setLikes(blog.likes)
-    } catch (ex) {
-      console.error(ex)
-    }
-  }
-
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       { blog.title } { blog.author }
-      <button onClick={toggleDetails}>{ showDetails ? 'hide' : 'show' }</button>
-      <div style={details}>
+      <button onClick={toggleDetails} id='detailsButton'>
+        { showDetails ? 'hide' : 'show' }
+      </button>
+      <div style={details} className='details'>
         <div>
           { blog.url }
         </div>
         <div>
-          { likes }
-          <button onClick={handleOnLike}>like</button>
+          { blog.likes }
+          <button onClick={handleOnLike} id='likeButton'>like</button>
         </div>
-        { children }
+        <div>
+          { blog.user.username }
+        </div>
+        <div>
+          <button style={{ display: username === blog.user.username ? '' : 'none' }} onClick={handleRemoveBlog}>remove</button>
+        </div>
       </div>
     </div>
   )

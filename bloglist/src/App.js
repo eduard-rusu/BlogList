@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import blogsService from './services/blogs'
-import AddBlog from './components/AddBlog'
+import BlogForm from './components/BlogForm'
 import Blog from './components/Blog'
 import Login from './components/Login'
 import Notification from './components/Notification'
@@ -17,10 +17,24 @@ const App = () => {
     window.localStorage.removeItem('loggedBloglistUser')
   }
 
-  const addNewBlog = (newBlog) => {
-    setBlogs(blogs.concat(newBlog))
-    setMessage(`Added ${newBlog.title} by ${newBlog.author}`)
-    blogFormRef.current.toggleVisibility()
+  const test = () => {
+
+  }
+
+  const addNewBlog = async ({ title, author, url }) => {
+    if (title === '' || author === '' || url === '') {
+      setMessage('Incomplete form')
+      return
+    }
+    try {
+      const res = await blogsService.create({ title, author, url })
+      setBlogs(blogs.concat(res))
+      setMessage(`Added ${res.title} by ${res.author}`)
+      blogFormRef.current.toggleVisibility()
+    } catch (ex) {
+      setMessage(ex)
+      console.error(ex)
+    }
   }
 
   const handleRemoveBlog = (blog) => {
@@ -38,9 +52,18 @@ const App = () => {
     }
   }
 
+  const handleOnLike = (blog) => {
+    return () => {
+      const newBlog = {}
+      Object.assign(newBlog, blog)
+      newBlog.likes += 1
+      setBlogs(blogs.filter(b => b !== blog).concat(newBlog))
+    }
+  }
+
   useEffect(() => {
     blogsService.getAll()
-      .then(data => setBlogs(data))
+      .then(data => setBlogs(data.sort((a, b) => b.likes - a.likes)))
       .catch(err => console.error(err))
 
     const user = JSON.parse(window.localStorage.getItem('loggedBloglistUser'))
@@ -72,14 +95,7 @@ const App = () => {
   const blogForm = () => {
     const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes).map(b => {
       return (
-        <Blog key={b.id} blog={b}>
-          <div>
-            { b.user.username }
-          </div>
-          <div>
-            <button style={{ display: user.username === b.user.username ? '' : 'none' }} onClick={handleRemoveBlog(b)}>remove</button>
-          </div>
-        </Blog>
+        <Blog key={b.id} blog={b} username={user.username} handleOnLike={handleOnLike(b)} handleRemoveBlog={handleRemoveBlog(b)}/>
       )
     })
     return (
@@ -91,7 +107,7 @@ const App = () => {
         </div>
         <Toggleable buttonLabel={'create new blog'} ref={blogFormRef}>
           <h2>create new</h2>
-          <AddBlog addNewBlog={addNewBlog} notification={setMessage}/>
+          <BlogForm addNewBlog={test}/>
         </Toggleable>
         { sortedBlogs }
       </>
