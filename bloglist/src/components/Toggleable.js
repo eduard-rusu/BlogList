@@ -2,7 +2,7 @@ import { forwardRef, useImperativeHandle, useState } from 'react'
 import PropTypes from 'prop-types'
 
 const Toggleable = forwardRef(({ buttonLabel, children }, refs) => {
-  const [loginVisible, setLoginVisible] = useState(false)
+  const [loginVisible, setLoginVisible] = useState(true)
   const hide = { display: loginVisible ? 'none' : '' }
   const show = { display: loginVisible ? '' : 'none' }
 

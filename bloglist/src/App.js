@@ -5,10 +5,14 @@ import Blog from './components/Blog'
 import Login from './components/Login'
 import Notification from './components/Notification'
 import Toggleable from './components/Toggleable'
+import loginService from './services/login'
+import blogService from './services/blogs'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
   const blogFormRef = useRef()
 
@@ -17,8 +21,17 @@ const App = () => {
     window.localStorage.removeItem('loggedBloglistUser')
   }
 
-  const test = () => {
-
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    try {
+      const user = await loginService.login({ username, password })
+      window.localStorage.setItem('loggedBloglistUser', JSON.stringify(user))
+      blogService.setToken(user.token)
+      setUser(user)
+    } catch (ex) {
+      setMessage(ex.message)
+      console.error(ex)
+    }
   }
 
   const addNewBlog = async ({ title, author, url }) => {
@@ -86,7 +99,13 @@ const App = () => {
       <>
         <h2>Login</h2>
         <Toggleable buttonLabel={'log in'}>
-          <Login setUser={setUser}/>
+          <Login
+            handleOnSubmit={handleLogin}
+            setUsername={setUsername}
+            setPassword={setPassword}
+            username={username}
+            password={password}
+          />
         </Toggleable>
       </>
     )
@@ -107,7 +126,7 @@ const App = () => {
         </div>
         <Toggleable buttonLabel={'create new blog'} ref={blogFormRef}>
           <h2>create new</h2>
-          <BlogForm addNewBlog={test}/>
+          <BlogForm addNewBlog={addNewBlog}/>
         </Toggleable>
         { sortedBlogs }
       </>

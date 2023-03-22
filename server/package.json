@@ -8,7 +8,8 @@
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
     "test:blog": "npm run test -- tests/blog_api.test.js",
     "test:user": "npm run test -- tests/user_api.test.js",
-    "dev": "cross-env NODE_ENV=prod nodemon index.js"
+    "dev": "cross-env NODE_ENV=prod nodemon index.js",
+    "start:test": "cross-env NODE_ENV=test node index.js"
   },
   "repository": {
     "type": "git",

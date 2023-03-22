@@ -2,28 +2,20 @@ import { useState } from 'react'
 import loginService from '../services/login'
 import blogServices from '../services/blogs'
 
-const Login = ({ setUser }) => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-
-  const handleOnSubmit = async (e) => {
-    e.preventDefault()
-
-    try {
-      const user = await loginService.login({ username, password })
-      window.localStorage.setItem('loggedBloglistUser', JSON.stringify(user))
-      blogServices.setToken(user.token)
-      setUser(user)
-    } catch (ex) {
-      console.error(ex)
-    }
-  }
+const Login = ({
+  handleOnSubmit,
+  setUsername,
+  setPassword,
+  username,
+  password,
+}) => {
 
   return (
-    <form onSubmit={ handleOnSubmit }>
+    <form className="loginForm" onSubmit={ handleOnSubmit }>
       <div>
         username:
         <input
+          id="username-input"
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
@@ -33,13 +25,14 @@ const Login = ({ setUser }) => {
       <div>
         password:
         <input
+          id="password-input"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         >
         </input>
       </div>
-      <button type="submit">Login</button>
+      <button id="login-submit" type="submit">Login</button>
     </form>
   )
 }
